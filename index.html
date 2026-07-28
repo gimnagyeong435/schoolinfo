@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>학교 알리미</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-50 min-h-screen p-4">
+    <div class="max-w-3xl mx-auto">
+        <h1 class="text-2xl font-bold text-center mb-6">🏫 학교 알리미</h1>
+        
+        <!-- 검색 설정 -->
+        <div class="bg-white p-4 rounded-xl shadow mb-6">
+            <div class="grid grid-cols-2 gap-2 mb-4">
+                <select id="atptCode" class="p-2 border rounded">
+                    <option value="J10">경기도교육청</option>
+                    <option value="B10">서울특별시교육청</option>
+                </select>
+                <input type="text" id="schulNm" placeholder="학교명" class="p-2 border rounded">
+            </div>
+            <button onclick="search()" class="w-full bg-blue-600 text-white py-2 rounded font-bold">조회하기</button>
+        </div>
+
+        <!-- 탭 -->
+        <div class="flex gap-2 mb-4">
+            <button onclick="switchTab('meal')" class="flex-1 py-2 bg-blue-500 text-white rounded">급식</button>
+            <button onclick="switchTab('schedule')" class="flex-1 py-2 bg-slate-200 rounded">학사일정</button>
+        </div>
+
+        <div id="result" class="bg-white p-4 rounded-xl shadow min-h-[300px]"></div>
+    </div>
+
+    <script>
+        let currentTab = 'meal';
+        function switchTab(tab) { currentTab = tab; search(); }
+
+        async function search() {
+            const atpt = document.getElementById('atptCode').value;
+            const name = document.getElementById('schulNm').value;
+            const resultDiv = document.getElementById('result');
+            
+            resultDiv.innerHTML = '조회 중...';
+            
+            // 서버리스 함수 호출 (API 키는 서버에서 주입됨)
+            const res = await fetch(`/api/proxy?type=${currentTab}&atpt=${atpt}&name=${encodeURIComponent(name)}`);
+            const data = await res.json();
+            
+            resultDiv.innerHTML = JSON.stringify(data, null, 2); // 결과 표시 로직 추가 필요
+        }
+    </script>
+</body>
+</html>
